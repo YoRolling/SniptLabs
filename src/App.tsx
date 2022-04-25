@@ -1,44 +1,51 @@
-import { useState } from 'react'
-import logo from './logo.svg'
+import Layout from '@/components/Layout/Layout'
+import Index from '@/pages/Home/Index'
+import { MantineProvider } from '@mantine/core'
+import { useColorScheme } from '@mantine/hooks'
+import { ModalsProvider } from '@mantine/modals'
+import { useMemo, useState } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
+import Editor from './components/Editor/Editor'
+import { ColorSchemeContext } from './context/ThemeContext'
+const App = () => {
+  const colorScheme = useColorScheme()
+  const [, updateColorScheme] = useState(() => {
+    return colorScheme
+  })
 
-function App() {
-  const [count, setCount] = useState(0)
-
+  const colorSchemeProvider = useMemo(
+    () => ({
+      colorScheme: colorScheme,
+      setColorScheme: () => {
+        updateColorScheme(colorScheme === 'dark' ? 'light' : 'dark')
+      },
+    }),
+    [colorScheme]
+  )
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React + Tauri !</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
+    <ColorSchemeContext.Provider value={colorSchemeProvider}>
+      <MantineProvider
+        withGlobalStyles
+        theme={{ colorScheme: colorSchemeProvider.colorScheme as any }}
+      >
+        <ModalsProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path='/' element={<Layout />}>
+                <Route path='*' element={<Index />}>
+                  <Route index element={<div>home </div>} />
+                  <Route path=':id' element={<div>:id</div>} />
+                  <Route path='editor' element={<Editor />} />
+                </Route>
+                <Route path='settings' element={<div>settings</div>} />
+              </Route>
+              <Route path='*' element={<div>Not found</div>} />
+            </Routes>
+          </BrowserRouter>
+        </ModalsProvider>
+      </MantineProvider>
+    </ColorSchemeContext.Provider>
   )
 }
 
