@@ -16,3 +16,6 @@ type Snippent = Base & {
 type Tag = Base & {
   name: string
 }
+type Folder = Base & {
+  name: string
+}

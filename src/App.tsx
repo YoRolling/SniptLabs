@@ -3,10 +3,11 @@ import Index from '@/pages/Home/Index'
 import { MantineProvider } from '@mantine/core'
 import { useColorScheme } from '@mantine/hooks'
 import { ModalsProvider } from '@mantine/modals'
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { ThreeBody } from '@uiball/loaders'
 import './App.css'
-import Editor from './components/Editor/Editor'
+const Editor = lazy(() => import('@/components/Editor/Editor'))
 import { ColorSchemeContext } from './context/ThemeContext'
 const App = () => {
   const colorScheme = useColorScheme()
@@ -24,28 +25,48 @@ const App = () => {
     [colorScheme]
   )
   return (
-    <ColorSchemeContext.Provider value={colorSchemeProvider}>
-      <MantineProvider
-        withGlobalStyles
-        theme={{ colorScheme: colorSchemeProvider.colorScheme as any }}
-      >
-        <ModalsProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path='/' element={<Layout />}>
-                <Route path='*' element={<Index />}>
-                  <Route index element={<div>home </div>} />
-                  <Route path=':id' element={<div>:id</div>} />
-                  <Route path='editor' element={<Editor />} />
+    <>
+      <ColorSchemeContext.Provider value={colorSchemeProvider}>
+        <MantineProvider
+          withGlobalStyles
+          theme={{
+            colorScheme: colorSchemeProvider.colorScheme as any,
+            fontFamily: `-apple-system, 'Microsoft YaHei', BlinkMacSystemFont, 'Segoe UI',
+          'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+          'Helvetica Neue', sans-serif`,
+          }}
+        >
+          <ModalsProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path='/' element={<Layout />}>
+                  <Route path='*' element={<Index />}>
+                    <Route index element={<div>home </div>} />
+                    <Route path=':id' element={<div>:id</div>} />
+                    <Route
+                      path='editor'
+                      element={
+                        <Suspense
+                          fallback={
+                            <div className='wrap'>
+                              <ThreeBody size={35} speed={1.1} color='black' />
+                            </div>
+                          }
+                        >
+                          <Editor />
+                        </Suspense>
+                      }
+                    />llll
+                  </Route>
+                  <Route path='settings' element={<div>settings</div>} />
                 </Route>
-                <Route path='settings' element={<div>settings</div>} />
-              </Route>
-              <Route path='*' element={<div>Not found</div>} />
-            </Routes>
-          </BrowserRouter>
-        </ModalsProvider>
-      </MantineProvider>
-    </ColorSchemeContext.Provider>
+                <Route path='*' element={<div>Not found</div>} />
+              </Routes>
+            </BrowserRouter>
+          </ModalsProvider>
+        </MantineProvider>
+      </ColorSchemeContext.Provider>
+    </>
   )
 }
 

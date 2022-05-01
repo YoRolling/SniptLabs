@@ -2,8 +2,10 @@
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-
+#[cfg(target_os = "macos")]
 use cocoa::appkit::NSWindow;
+use tauri_plugin_sql::{Migration, MigrationKind, TauriSql};
+
 use tauri::{Runtime, Window};
 pub trait WindowExt {
     #[cfg(target_os = "macos")]
@@ -38,10 +40,19 @@ impl<R: Runtime> WindowExt for Window<R> {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(TauriSql::default().add_migrations(
+            "sqlite:SniptBank.db",
+            vec![Migration {
+                version: 1,
+                description: "initial databse",
+                sql: include_str!("../migrations/2022-04-27.sql"),
+                kind: MigrationKind::Up,
+            }],
+        ))
         // .setup(|app| {
         //     let win = app.get_window("main").unwrap();
         //     win.set_transparent_titlebar(true);
-        //     Ok(())
+        //     Ok(())F
         // })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

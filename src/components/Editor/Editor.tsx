@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import 'monaco-editor/esm/vs/basic-languages/css/css.contribution'
 import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution'
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
@@ -9,15 +9,8 @@ import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-import {
-  Button,
-  Group,
-  NativeSelect,
-  Select,
-  Stack,
-  TextInput,
-} from '@mantine/core'
-import { useWindowEvent } from '@mantine/hooks'
+import { Button, Group, Select, Stack, TextInput } from '@mantine/core'
+import { useColorScheme, useWindowEvent } from '@mantine/hooks'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -36,13 +29,13 @@ const languages = monaco.languages
 export default function Editor() {
   const editorRef = useRef<HTMLDivElement>(null)
   const editor = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
-
+  const colorScheme = useColorScheme()
   useEffect(() => {
     if (editorRef.current) {
       editor.current = monaco.editor.create(editorRef.current, {
         value: 'function x() {\n\tconsole.log("Hello world!")\n}',
         language: 'typescript',
-        theme: 'vs-dark',
+        theme: colorScheme === 'light' ? 'vs' : 'vs-dark',
         minimap: {
           enabled: true,
         },
@@ -83,12 +76,6 @@ export default function Editor() {
             monaco.editor.setModelLanguage(model!, e!)
           }}
           data={languages}
-        ></Select>
-        <Select
-          label='colorTheme'
-          name='colorTheme'
-          size='sm'
-          data={[{ value: 'json', label: 'json' }]}
         ></Select>
       </Group>
       <Group className='flex-none' style={{ order: 2 }}>
