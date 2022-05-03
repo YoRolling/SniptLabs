@@ -1,5 +1,5 @@
 import { ScrollArea, Box, Group, Button } from '@mantine/core'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { Plus } from 'tabler-icons-react'
 import SinppentItem from './components/SinppetItem'
 
@@ -9,6 +9,8 @@ export default function Index() {
 
 function IndexApp() {
   const navigation = useNavigate()
+  const params = useParams()
+  console.log({ params })
   const preCreateSnippet = () => {
     console.log('preCreateSnippet')
     navigation('editor')

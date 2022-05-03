@@ -4,7 +4,7 @@ import { MantineProvider } from '@mantine/core'
 import { useColorScheme } from '@mantine/hooks'
 import { ModalsProvider } from '@mantine/modals'
 import { lazy, Suspense, useMemo, useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 import { ThreeBody } from '@uiball/loaders'
 import './App.css'
 const Editor = lazy(() => import('@/components/Editor/Editor'))
@@ -14,7 +14,8 @@ const App = () => {
   const [, updateColorScheme] = useState(() => {
     return colorScheme
   })
-
+  const params = useParams()
+  console.log(params)
   const colorSchemeProvider = useMemo(
     () => ({
       colorScheme: colorScheme,
@@ -30,7 +31,7 @@ const App = () => {
         <MantineProvider
           withGlobalStyles
           theme={{
-            colorScheme: colorSchemeProvider.colorScheme as any,
+            colorScheme: colorSchemeProvider.colorScheme as never,
             fontFamily: `-apple-system, 'Microsoft YaHei', BlinkMacSystemFont, 'Segoe UI',
           'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
           'Helvetica Neue', sans-serif`,
@@ -40,7 +41,8 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path='/' element={<Layout />}>
-                  <Route path='*' element={<Index />}>
+                  <Route index element={<Index />} /> 
+                  <Route path=':type/:id' element={<Index />}>
                     <Route index element={<div>home </div>} />
                     <Route path=':id' element={<div>:id</div>} />
                     <Route
@@ -56,7 +58,7 @@ const App = () => {
                           <Editor />
                         </Suspense>
                       }
-                    />llll
+                    />
                   </Route>
                   <Route path='settings' element={<div>settings</div>} />
                 </Route>

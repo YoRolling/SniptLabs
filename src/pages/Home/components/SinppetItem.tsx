@@ -8,7 +8,16 @@ export default function SinppentItem(props: {
     item: { name, tags },
   } = props
   return (
-    <Stack className='item p-2 cursor-pointer' onClick={props.onClick}>
+    <Stack
+      className='mx-2 item p-2 rounded bg-slate-50 cursor-pointer'
+      onClick={props.onClick}
+      sx={(theme) => ({
+        '&.active,&:hover': {
+          color: '#FFF',
+          backgroundColor: theme.colors.indigo['4'],
+        },
+      })}
+    >
       <Box className='item-header'>
         <Box className='item-title'>
           <Text>{name}</Text>

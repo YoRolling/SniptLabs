@@ -11,6 +11,7 @@ import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import { Button, Group, Select, Stack, TextInput } from '@mantine/core'
 import { useColorScheme, useWindowEvent } from '@mantine/hooks'
+import { SnippentService } from '@/services'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -29,6 +30,8 @@ const languages = monaco.languages
 export default function Editor() {
   const editorRef = useRef<HTMLDivElement>(null)
   const editor = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
+  const nameRef = useRef<HTMLInputElement>(null)
+  const languageRef = useRef<HTMLInputElement>(null)
   const colorScheme = useColorScheme()
   useEffect(() => {
     if (editorRef.current) {
@@ -57,19 +60,40 @@ export default function Editor() {
   const resize = () => {
     console.log('resize')
     if (editor.current) {
-      console.log(editor.current.getDomNode())
       editor.current.layout()
+    }
+  }
+  const save = () => {
+    const data = {} as Snippent
+    const name = nameRef.current?.value
+    const language = languageRef.current?.value
+    const model = editor.current?.getValue()
+    if (name && language && model) {
+      data.name = name
+      data.language = language
+      data.code = model
+      SnippentService.save(data).then((res) => {
+        console.log('save result ', res)
+      })
     }
   }
   useWindowEvent('resize', resize)
   return (
     <Stack className='h-full p-4 overflow-hidden'>
-      <TextInput name='title' label='名称' required className='flex-none' />
+      <TextInput
+        name='title'
+        label='名称'
+        required
+        className='flex-none'
+        ref={nameRef}
+      />
       <Group position='apart' className='flex-none'>
         <Select
           size='sm'
-          label='类型'
+          label='语法类型'
           name='language'
+          defaultValue={'typescript'}
+          ref={languageRef}
           onChange={(e) => {
             console.log(e)
             const model = editor.current?.getModel() || null
@@ -79,7 +103,7 @@ export default function Editor() {
         ></Select>
       </Group>
       <Group className='flex-none' style={{ order: 2 }}>
-        <Button>Save</Button>
+        <Button onClick={save}>Save</Button>
       </Group>
       <div
         id='editor'

@@ -1,5 +1,5 @@
-import db from '@/utils/db';
+import db from '@/utils/db'
 
-export async function selectAll() {
-    return db.execute('SELECT * FROM snippets where deprecated = 0')
+export async function selectAll(): Promise<Tag[]> {
+  return await db.select('SELECT * FROM snippets where deprecated = 0')
 }
