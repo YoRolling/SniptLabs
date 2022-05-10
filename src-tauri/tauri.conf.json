@@ -28,12 +28,10 @@
       "shortDescription": "",
       "longDescription": "",
       "deb": {
-        "depends": [],
-        "useBootstrapper": false
+        "depends": []
       },
       "macOS": {
         "frameworks": [],
-        "useBootstrapper": false,
         "exceptionDomain": "",
         "signingIdentity": null,
         "providerShortName": null,
@@ -60,8 +58,7 @@
         "fullscreen": false,
         "minWidth": 800,
         "minHeight": 600,
-        "decorations": false,
-        "transparent": true
+        "decorations": false
       }
     ],
     "security": {

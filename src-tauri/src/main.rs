@@ -6,7 +6,7 @@
 use cocoa::appkit::NSWindow;
 use tauri_plugin_sql::{Migration, MigrationKind, TauriSql};
 
-use tauri::{Runtime, Window};
+use tauri::{App, Manager, Runtime, Window};
 pub trait WindowExt {
     #[cfg(target_os = "macos")]
     fn set_transparent_titlebar(&self, transparetn: bool);
@@ -49,11 +49,15 @@ fn main() {
                 kind: MigrationKind::Up,
             }],
         ))
-        // .setup(|app| {
-        //     let win = app.get_window("main").unwrap();
-        //     win.set_transparent_titlebar(true);
-        //     Ok(())F
-        // })
+        // .setup(|app| {})
+        .setup(set_up_window)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(target_os = "macos")]
+fn set_up_window<R: Runtime>(app: &mut App<R>) -> Result<(), Box<dyn std::error::Error>> {
+    let win = app.get_window("main").unwrap();
+    let _ = win.set_decorations(true);
+    Ok(())
 }

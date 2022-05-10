@@ -31,7 +31,7 @@ branch = "dev"
 git = "https://github.com/tauri-apps/tauri-plugin-log"
 branch = "dev"
 
-[target.'cfg(macos)'.dependencies]
+[target.'cfg(target_os = "macos")'.dependencies]
 cocoa = { version = "0.24.0" }
 
 
