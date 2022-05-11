@@ -4,7 +4,13 @@ import { MantineProvider } from '@mantine/core'
 import { useColorScheme } from '@mantine/hooks'
 import { ModalsProvider } from '@mantine/modals'
 import { lazy, Suspense, useMemo, useState } from 'react'
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useParams,
+} from 'react-router-dom'
 import { ThreeBody } from '@uiball/loaders'
 import './App.css'
 const Editor = lazy(() => import('@/components/Editor/Editor'))
@@ -41,7 +47,7 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path='/' element={<Layout />}>
-                  <Route index element={<Index />} /> 
+                  <Route index element={<Navigate to='folder/1' />} />
                   <Route path=':type/:id' element={<Index />}>
                     <Route index element={<div>home </div>} />
                     <Route path=':id' element={<div>:id</div>} />

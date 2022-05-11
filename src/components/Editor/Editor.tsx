@@ -71,7 +71,9 @@ export default function Editor() {
     if (name && language && model) {
       data.name = name
       data.language = language
-      data.code = model
+      data.content = model
+      data.folerId = 1
+      data.tsId = 1
       SnippentService.save(data).then((res) => {
         console.log('save result ', res)
       })
@@ -85,11 +87,12 @@ export default function Editor() {
         label='名称'
         required
         className='flex-none'
+        size='xs'
         ref={nameRef}
       />
       <Group position='apart' className='flex-none'>
         <Select
-          size='sm'
+          size='xs'
           label='语法类型'
           name='language'
           defaultValue={'typescript'}
@@ -97,6 +100,7 @@ export default function Editor() {
           onChange={(e) => {
             console.log(e)
             const model = editor.current?.getModel() || null
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             monaco.editor.setModelLanguage(model!, e!)
           }}
           data={languages}

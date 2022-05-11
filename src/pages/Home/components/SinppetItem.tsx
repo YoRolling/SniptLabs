@@ -6,6 +6,7 @@ export default function SinppentItem(props: {
 }) {
   const {
     item: { name, tags },
+    item,
   } = props
   return (
     <Stack
@@ -18,12 +19,13 @@ export default function SinppentItem(props: {
         },
       })}
     >
-      <Box className='item-header'>
-        <Box className='item-title'>
-          <Text>{name}</Text>
-        </Box>
+      <Box className='item-header flex items-center gap-4px'>
+        <Text className='item-title font-mono'>{name}</Text>
       </Box>
       <Box className='mt-2'>
+        <Badge color='grape' className='uppercase text-xs font-mono'>
+          {item.language}
+        </Badge>
         <Group>
           {tags?.map((v) => (
             <Badge key={v.id}>{v.name}</Badge>

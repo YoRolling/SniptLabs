@@ -1,8 +1,8 @@
 import { FolderService } from '@/services'
+import { Group, Title, Stack } from '@mantine/core'
 import { LineWobble } from '@uiball/loaders'
 import { useEffect, useState } from 'react'
-import { Folders } from 'tabler-icons-react'
-import DetailNative from './DetailNative'
+import { Folders, Plus } from 'tabler-icons-react'
 import SidebarNavItem from './SidebarNavItem'
 
 export default function FolderContainer() {
@@ -23,16 +23,30 @@ export default function FolderContainer() {
       })
   }, [])
   if (loading) {
-    return <LineWobble size={80} lineWeight={5} speed={1.75} color='black' />
+    return <LineWobble size={246} lineWeight={5} speed={1.75} color='black' />
   }
   if (error) {
     return <div>Error</div>
   }
   return (
-    <DetailNative title='folder'>
-      {folderList.map((v) => (
-        <SidebarNavItem key={v.id} item={v} icon={<Folders size={16}/>}  baseUrl="/folder/"/>
-      ))}
-    </DetailNative>
+    <Stack spacing={4}>
+      <Group>
+        <Title className='uppercase flex-1 py-1 text-sm rounded text-gray-500 dark:text-gray-100'>
+          folder
+        </Title>
+        <Plus size={16} className='cursor-pointer' />
+      </Group>
+      {folderList.map((tag: Tag) => {
+        return (
+          <SidebarNavItem
+            className='pl-5'
+            key={tag.id}
+            item={tag}
+            icon={<Folders size={18} />}
+            baseUrl='/folder/'
+          />
+        )
+      })}
+    </Stack>
   )
 }

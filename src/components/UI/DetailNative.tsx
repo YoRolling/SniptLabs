@@ -26,7 +26,6 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   },
   summary: {
     ref: getRef('summary'),
-    fontWeight: "bold",
     listStyle: 'none',
     display: 'flex',
     gap: '4px',
@@ -35,6 +34,10 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     fontFamily: "'Operator Mono Light','LXGW WenKai Mono',Monaco,Hack",
     height: '40px',
     cursor: 'pointer',
+    letterSpacing: '2px',
+    '&::-webkit-details-marker': {
+      display: 'none',
+    },
   },
 }))
 

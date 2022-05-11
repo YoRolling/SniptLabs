@@ -8,9 +8,11 @@ type Snippent = Base & {
   name: string
   tags?: Tag[]
   language?: string
-  code?: string
+  content?: string
   description?: string
   color?: string
+  folerId?: number
+  tsId?: number
 }
 
 type Tag = Base & {

@@ -22,10 +22,8 @@ export async function getRelated(id: number) {
  */
 export async function save(snippet: Snippent) {
   const { id, ...data } = snippet
-  const keys = Object.keys(data)
-  const values = keys.map(
-    (key) => (data as unknown as Record<string, unknown>)[key]
-  )
+  const keys = Object.keys(data) as Array<keyof typeof data>
+  const values = keys.map((key) => data[key])
   if (id) {
     const args = keys.map((v) => v + '=?').join(',')
     return db.execute(`UPDATE snippets SET ${args} WHERE id = ?`, [
@@ -33,10 +31,14 @@ export async function save(snippet: Snippent) {
       id,
     ])
   } else {
-    return db.execute(
-      `INSERT INTO snippets(${keys.join(',')}) values(?)`,
-      values
-    )
+    return db
+      .execute(
+        `INSERT INTO snippets(${keys.join(',')}) values(${keys
+          .map(() => '?')
+          .join(',')})`,
+        values
+      )
+      .then((res) => res.rowsAffected > 0)
   }
 }
 
@@ -45,7 +47,9 @@ export async function remove(id: number) {
 }
 
 export async function selectAll() {
-  return db.execute('SELECT * FROM snippets where deprecated = 0')
+  return db.select(
+    'SELECT * FROM snippets where deprecated = 0'
+  ) as unknown as Snippent[]
 }
 
 export async function selectByTag(tag: string) {
