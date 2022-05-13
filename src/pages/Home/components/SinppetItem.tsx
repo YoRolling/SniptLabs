@@ -1,17 +1,22 @@
-import { Stack, Box, Text, Group, Badge } from '@mantine/core'
+import { Stack, Box, Text, Group, Badge, UnstyledButton } from '@mantine/core'
+import { NavLink } from 'react-router-dom'
 
 export default function SinppentItem(props: {
   item: Snippent
   onClick: () => void
+  active?: boolean
 }) {
   const {
     item: { name, tags },
     item,
+    active = false,
   } = props
+  console.log({ active })
   return (
-    <Stack
-      className='mx-2 item p-2 rounded bg-slate-50 cursor-pointer'
-      onClick={props.onClick}
+    <UnstyledButton
+      component={NavLink}
+      to={`${item.id}`}
+      className='flex flex-col mx-2 item p-2 rounded bg-slate-50 cursor-pointer gap-10px '
       sx={(theme) => ({
         '&.active,&:hover': {
           color: '#FFF',
@@ -32,6 +37,6 @@ export default function SinppentItem(props: {
           ))}
         </Group>
       </Box>
-    </Stack>
+    </UnstyledButton>
   )
 }

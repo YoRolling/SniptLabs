@@ -7,6 +7,7 @@ import { lazy, Suspense, useMemo, useState } from 'react'
 import {
   BrowserRouter,
   Navigate,
+  Outlet,
   Route,
   Routes,
   useParams,
@@ -47,24 +48,28 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path='/' element={<Layout />}>
-                  <Route index element={<Navigate to='folder/1' />} />
-                  <Route path=':type/:id' element={<Index />}>
-                    <Route index element={<div>home </div>} />
-                    <Route path=':id' element={<div>:id</div>} />
-                    <Route
-                      path='editor'
-                      element={
-                        <Suspense
-                          fallback={
-                            <div className='wrap'>
-                              <ThreeBody size={35} speed={1.1} color='black' />
-                            </div>
-                          }
-                        >
-                          <Editor />
-                        </Suspense>
-                      }
-                    />
+                  <Route index element={<Navigate to='dash' />} />
+                  <Route path='dash' element={<Index />}>
+                    <Route path=':id' element={<Outlet />}>
+                      <Route
+                        index
+                        element={
+                          <Suspense
+                            fallback={
+                              <div className='wrap'>
+                                <ThreeBody
+                                  size={35}
+                                  speed={1.1}
+                                  color='black'
+                                />
+                              </div>
+                            }
+                          >
+                            <Editor />
+                          </Suspense>
+                        }
+                      />
+                    </Route>
                   </Route>
                   <Route path='settings' element={<div>settings</div>} />
                 </Route>

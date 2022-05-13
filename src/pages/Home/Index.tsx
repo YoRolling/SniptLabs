@@ -1,12 +1,7 @@
 import { SnippentService } from '@/services'
-import {
-  ScrollArea,
-  Box,
-  Group,
-  Button,
-  Input,
-  InputWrapper,
-} from '@mantine/core'
+import { navFilterAtom } from '@/store/NavFilter'
+import { ScrollArea, Box, Group, Input, InputWrapper } from '@mantine/core'
+import { useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { ListSearch, Plus } from 'tabler-icons-react'
@@ -18,25 +13,36 @@ export default function Index() {
 
 function IndexApp() {
   const navigation = useNavigate()
-  const params = useParams()
+  const params: { id: string } = useParams() as { id: string }
   console.log({ params })
-
+  const filter = useAtomValue(navFilterAtom)
+  console.log(filter)
   const [snippetList, setSnippetList] = useState<Snippent[]>([])
   const preCreateSnippet = () => {
     console.log('preCreateSnippet')
     navigation('editor')
   }
   const showPreview = () => {
-    navigation('12')
+    console.log('showPreview', params)
+    navigation(params.id)
   }
   useEffect(() => {
-    SnippentService.selectAll()
-      .then((res) => {
-        console.log(res)
-        setSnippetList(res)
-      })
-      .catch((error) => console.log(error))
-  }, [])
+    const { type, params } = filter
+    switch (type) {
+      case 'folder':
+        // eslint-disable-next-line no-case-declarations
+        const { id } = params || {}
+        SnippentService.filterByFolder(id!).then(setSnippetList)
+        break
+      case 'pinned':
+        SnippentService.getPinnedSnippents()
+          .then(setSnippetList)
+          .catch(() => setSnippetList([]))
+        break
+      default:
+        SnippentService.getInboxSnippets().then(setSnippetList)
+    }
+  }, [filter])
   return (
     <div className='flex divide-x h-full overflow-hidden'>
       <div className='w-280px flex flex-col flex-none divide-y'>
@@ -63,6 +69,7 @@ function IndexApp() {
                   item={snippet}
                   key={snippet.id}
                   onClick={showPreview}
+                  active={snippet.id == params.id}
                 />
               )
             })}

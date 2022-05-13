@@ -9,7 +9,7 @@ import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-import { Button, Group, Select, Stack, TextInput } from '@mantine/core'
+import { Stack, TextInput } from '@mantine/core'
 import { useColorScheme, useWindowEvent } from '@mantine/hooks'
 import { SnippentService } from '@/services'
 
@@ -42,6 +42,7 @@ export default function Editor() {
         minimap: {
           enabled: true,
         },
+        readOnly: true,
       })
     }
 
@@ -81,34 +82,15 @@ export default function Editor() {
   }
   useWindowEvent('resize', resize)
   return (
-    <Stack className='h-full p-4 overflow-hidden'>
+    <Stack className='h-full p-4 overflow-hidden divide-y'>
       <TextInput
         name='title'
-        label='名称'
         required
         className='flex-none'
         size='xs'
         ref={nameRef}
+        // variant='unstyled'
       />
-      <Group position='apart' className='flex-none'>
-        <Select
-          size='xs'
-          label='语法类型'
-          name='language'
-          defaultValue={'typescript'}
-          ref={languageRef}
-          onChange={(e) => {
-            console.log(e)
-            const model = editor.current?.getModel() || null
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            monaco.editor.setModelLanguage(model!, e!)
-          }}
-          data={languages}
-        ></Select>
-      </Group>
-      <Group className='flex-none' style={{ order: 2 }}>
-        <Button onClick={save}>Save</Button>
-      </Group>
       <div
         id='editor'
         className='overflow-hidden flex-1 w-full mt-2'

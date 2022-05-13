@@ -60,8 +60,16 @@ export async function selectByTag(tag: string) {
 }
 
 export async function filterByFolder(folder: string | number) {
-  return db.execute(
+  return db.select(
     'SELECT * FROM snippets where deprecated = 0 and folerId = ?',
     [folder]
-  )
+  ) as unknown as Snippent[]
+}
+
+export async function getInboxSnippets(): Promise<Snippent[]> {
+  return db.select('SELECT * FROM snippets where deprecated = 0')
+}
+
+export async function getPinnedSnippents(): Promise<Snippent[]> {
+  return db.select('SELECT * FROM snippets where deprecated = 0 and pinned = 1')
 }

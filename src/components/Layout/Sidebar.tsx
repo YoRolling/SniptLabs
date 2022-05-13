@@ -4,7 +4,7 @@ import FolderContainer from '../UI/FolderContainer'
 import SidebarNavItem from '../UI/SidebarNavItem'
 export default function Sidebar() {
   return (
-    <Navbar className='w-240px h-auto flex-none divide-y  bg-sky-50 shadow-md'>
+    <Navbar className='w-240px h-auto flex-none bg-sky-50 shadow-md'>
       <Navbar.Section grow>
         <ScrollArea type='scroll' scrollbarSize={2} className='flex-1 p-4 '>
           <Stack spacing={4}>
