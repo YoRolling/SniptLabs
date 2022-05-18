@@ -2,6 +2,7 @@ import { UnstyledButton } from '@mantine/core'
 import { useReducerAtom } from 'jotai/utils'
 import { navFilterAtom, navFilterReducer } from '@/store/NavFilter'
 import { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 export default function SidebarNavItem({
   item,
   icon,
@@ -12,15 +13,22 @@ export default function SidebarNavItem({
   baseUrl?: string
   className?: React.HTMLAttributes<HTMLButtonElement>['className']
 }) {
+  const navigation = useNavigate()
   const [filter, setFilter] = useReducerAtom(navFilterAtom, navFilterReducer)
-  console.log({ filter })
   const activeClass = useMemo(() => {
     const { type, params: { id } = {} } = filter
     return item.id === type ? 'active' : id === item.id ? 'active' : ''
   }, [filter, item.id])
   const toggleFilter = () => {
     let payload: NavFilter = {} as NavFilter
-    if (['inbox', 'pinned'].includes(item.id!)) {
+    if (!item) {
+      return
+    }
+    const { id } = item
+    if (!id) {
+      return
+    }
+    if (['inbox', 'pinned'].includes(id)) {
       payload = {
         type: item.id as NavFilterType,
       }
@@ -28,11 +36,13 @@ export default function SidebarNavItem({
       payload = {
         type: 'folder',
         params: {
-          id: item.id!,
+          id: id,
         },
       }
     }
+
     setFilter(payload)
+    // navigation('/')
   }
   return (
     <UnstyledButton

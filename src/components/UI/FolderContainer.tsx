@@ -13,7 +13,6 @@ export default function FolderContainer() {
     FolderService.selectAllFolders()
       .then((res: Folder[]) => {
         setFolderList(res)
-        console.log(res)
       })
       .catch(() => {
         setError(true)
@@ -36,7 +35,7 @@ export default function FolderContainer() {
         </Title>
         <Plus size={16} className='cursor-pointer' />
       </Group>
-      {folderList.map((tag: Tag) => {
+      {folderList.map((tag: Folder) => {
         return (
           <SidebarNavItem
             className='pl-5'

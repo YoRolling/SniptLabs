@@ -14,16 +14,12 @@ export default function Index() {
 function IndexApp() {
   const navigation = useNavigate()
   const params: { id: string } = useParams() as { id: string }
-  console.log({ params })
   const filter = useAtomValue(navFilterAtom)
-  console.log(filter)
   const [snippetList, setSnippetList] = useState<Snippent[]>([])
   const preCreateSnippet = () => {
-    console.log('preCreateSnippet')
     navigation('editor')
   }
   const showPreview = () => {
-    console.log('showPreview', params)
     navigation(params.id)
   }
   useEffect(() => {

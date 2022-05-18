@@ -16,13 +16,12 @@ import { ThreeBody } from '@uiball/loaders'
 import './App.css'
 const Editor = lazy(() => import('@/components/Editor/Editor'))
 import { ColorSchemeContext } from './context/ThemeContext'
+import { NotificationsProvider } from '@mantine/notifications'
 const App = () => {
   const colorScheme = useColorScheme()
   const [, updateColorScheme] = useState(() => {
     return colorScheme
   })
-  const params = useParams()
-  console.log(params)
   const colorSchemeProvider = useMemo(
     () => ({
       colorScheme: colorScheme,
@@ -45,37 +44,39 @@ const App = () => {
           }}
         >
           <ModalsProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path='/' element={<Layout />}>
-                  <Route index element={<Navigate to='dash' />} />
-                  <Route path='dash' element={<Index />}>
-                    <Route path=':id' element={<Outlet />}>
-                      <Route
-                        index
-                        element={
-                          <Suspense
-                            fallback={
-                              <div className='wrap'>
-                                <ThreeBody
-                                  size={35}
-                                  speed={1.1}
-                                  color='black'
-                                />
-                              </div>
-                            }
-                          >
-                            <Editor />
-                          </Suspense>
-                        }
-                      />
+            <NotificationsProvider position='top-right'>
+              <BrowserRouter>
+                <Routes>
+                  <Route path='/' element={<Layout />}>
+                    <Route index element={<Navigate to='dash' />} />
+                    <Route path='dash' element={<Index />}>
+                      <Route path=':id' element={<Outlet />}>
+                        <Route
+                          index
+                          element={
+                            <Suspense
+                              fallback={
+                                <div className='wrap'>
+                                  <ThreeBody
+                                    size={35}
+                                    speed={1.1}
+                                    color='black'
+                                  />
+                                </div>
+                              }
+                            >
+                              <Editor />
+                            </Suspense>
+                          }
+                        />
+                      </Route>
                     </Route>
+                    <Route path='settings' element={<div>settings</div>} />
                   </Route>
-                  <Route path='settings' element={<div>settings</div>} />
-                </Route>
-                <Route path='*' element={<div>Not found</div>} />
-              </Routes>
-            </BrowserRouter>
+                  <Route path='*' element={<div>Not found</div>} />
+                </Routes>
+              </BrowserRouter>
+            </NotificationsProvider>
           </ModalsProvider>
         </MantineProvider>
       </ColorSchemeContext.Provider>

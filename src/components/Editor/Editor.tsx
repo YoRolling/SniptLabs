@@ -9,9 +9,18 @@ import TsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import CssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-import { Stack, TextInput } from '@mantine/core'
-import { useColorScheme, useWindowEvent } from '@mantine/hooks'
+import {
+  Button,
+  Group,
+  SimpleGrid,
+  Stack,
+  TextInput,
+  UnstyledButton,
+} from '@mantine/core'
+import { useClipboard, useColorScheme, useWindowEvent } from '@mantine/hooks'
 import { SnippentService } from '@/services'
+import { CodePlus, Copy, Edit, Pin, Selector, Trash } from 'tabler-icons-react'
+import { showNotification } from '@mantine/notifications'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -33,16 +42,28 @@ export default function Editor() {
   const nameRef = useRef<HTMLInputElement>(null)
   const languageRef = useRef<HTMLInputElement>(null)
   const colorScheme = useColorScheme()
+  const clipboard = useClipboard({ timeout: 500 })
+  const language = useRef<string>('typescript')
   useEffect(() => {
     if (editorRef.current) {
       editor.current = monaco.editor.create(editorRef.current, {
         value: 'function x() {\n\tconsole.log("Hello world!")\n}',
-        language: 'typescript',
+        language: language.current || 'plaintext',
         theme: colorScheme === 'light' ? 'vs' : 'vs-dark',
         minimap: {
           enabled: true,
+          size: 'fit',
         },
         readOnly: true,
+        showFoldingControls: 'always',
+        renderLineHighlight: 'all',
+        scrollbar: {
+          useShadows: false,
+          horizontalScrollbarSize: 0,
+          horizontalSliderSize: 0,
+          verticalScrollbarSize: 0,
+          verticalSliderSize: 0,
+        },
       })
     }
 
@@ -59,9 +80,19 @@ export default function Editor() {
     }
   }, [editorRef])
   const resize = () => {
-    console.log('resize')
     if (editor.current) {
       editor.current.layout()
+    }
+  }
+  const copy = () => {
+    const model = editor.current?.getModel()
+    if (model) {
+      clipboard.copy(model.getValue())
+      showNotification({
+        title: 'Copied',
+        message: 'Code copied to clipboard',
+        color: 'green',
+      })
     }
   }
   const save = () => {
@@ -74,7 +105,6 @@ export default function Editor() {
       data.language = language
       data.content = model
       data.folerId = 1
-      data.tsId = 1
       SnippentService.save(data).then((res) => {
         console.log('save result ', res)
       })
@@ -82,20 +112,87 @@ export default function Editor() {
   }
   useWindowEvent('resize', resize)
   return (
-    <Stack className='h-full p-4 overflow-hidden divide-y'>
-      <TextInput
-        name='title'
-        required
-        className='flex-none'
-        size='xs'
-        ref={nameRef}
-        // variant='unstyled'
-      />
-      <div
-        id='editor'
-        className='overflow-hidden flex-1 w-full mt-2'
-        ref={editorRef}
-      ></div>
+    <Stack className='h-full p-4 overflow-hidden pb-0' spacing='xs'>
+      <Group className='divide-x'>
+        <TextInput
+          name='title'
+          required
+          placeholder='Title'
+          className='flex-1'
+          ref={nameRef}
+          variant='unstyled'
+        />
+        <SimpleGrid
+          cols={5}
+          className='justify-self-end pl-3 text-xs '
+          spacing='xs'
+        >
+          <Button
+            title='Edit'
+            variant='default'
+            size='xs'
+            compact
+            className='text-xs font-mono'
+            leftIcon={<Edit size={14} />}
+          >
+            Edit
+          </Button>
+          <Button
+            title='Copy'
+            onClick={copy}
+            variant='default'
+            size='xs'
+            compact
+            className='text-xs font-mono'
+            leftIcon={<Copy size={14} />}
+          >
+            Copy
+          </Button>
+
+          <Button
+            variant='default'
+            size='xs'
+            compact
+            className='text-xs font-mono'
+            title='Pin'
+            leftIcon={<Pin size={14} />}
+          >
+            Pin
+          </Button>
+          <Button
+            variant='default'
+            size='xs'
+            compact
+            className='text-xs font-mono'
+            title='Save'
+            onClick={save}
+            leftIcon={<CodePlus size={14} />}
+          >
+            Save
+          </Button>
+          <Button
+            // variant=''
+            size='xs'
+            color='red'
+            compact
+            className='text-xs font-mono'
+            title='Delete'
+            leftIcon={<Trash size={14} />}
+          >
+            Delete
+          </Button>
+        </SimpleGrid>
+      </Group>
+      <div className='overflow-hidden flex-1 w-full pt-2'>
+        <div className='w-full h-full' id='editor' ref={editorRef} />
+      </div>
+      <div className='status-bar flex items-center py-2'>
+        <UnstyledButton className='font-mono text-xs flex items-center gap-3px'>
+          {language.current}
+          <Selector size={12} />
+        </UnstyledButton>
+        <SimpleGrid cols={5} className='flex-none pl-3'></SimpleGrid>
+      </div>
     </Stack>
   )
 }

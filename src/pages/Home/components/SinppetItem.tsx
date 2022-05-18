@@ -1,4 +1,4 @@
-import { Stack, Box, Text, Group, Badge, UnstyledButton } from '@mantine/core'
+import { Box, Text, Group, Badge, UnstyledButton } from '@mantine/core'
 import { NavLink } from 'react-router-dom'
 
 export default function SinppentItem(props: {
@@ -7,11 +7,9 @@ export default function SinppentItem(props: {
   active?: boolean
 }) {
   const {
-    item: { name, tags },
+    item: { name },
     item,
-    active = false,
   } = props
-  console.log({ active })
   return (
     <UnstyledButton
       component={NavLink}
@@ -32,9 +30,9 @@ export default function SinppentItem(props: {
           {item.language}
         </Badge>
         <Group>
-          {tags?.map((v) => (
+          {/* {tags?.map((v) => (
             <Badge key={v.id}>{v.name}</Badge>
-          ))}
+          ))} */}
         </Group>
       </Box>
     </UnstyledButton>
