@@ -5,7 +5,8 @@ create table if not exists snippets (
   name text,
   content text,
   folerId integer,
-  tsId integer,
+  pinned integer,
+  `language` text,
   created_at datetime default current_timestamp,
   updated_at datetime default current_timestamp,
   deprecated integer default 0
@@ -21,19 +22,3 @@ create table if not exists folder (
   deprecated integer default 0
 );
 INSERT INTO folder(name) VALUES ('默认文件夹');
-
-create table if not exists tags (
-  id integer primary key autoincrement,
-  name text,
-  created_at datetime default current_timestamp,
-  updated_at datetime default current_timestamp,
-  deprecated integer default 0
-);
-
-CREATE table if not exists tag_snippet (
-  id integer primary key autoincrement,
-  tagId integer,
-  snippetId integer,
-  created_at datetime default current_timestamp,
-  updated_at datetime default current_timestamp
-);

@@ -19,7 +19,12 @@ impl<R: Runtime> WindowExt for Window<R> {
             let id = self.ns_window().unwrap() as cocoa::base::id;
             let mut style_mask = id.styleMask();
             style_mask.set(
-                NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask,
+                NSWindowStyleMask::NSFullSizeContentViewWindowMask
+                    | NSWindowStyleMask::NSClosableWindowMask
+                    | NSWindowStyleMask::NSMiniaturizableWindowMask
+                    | NSWindowStyleMask::NSResizableWindowMask
+                    | NSWindowStyleMask::NSUnifiedTitleAndToolbarWindowMask
+                    | NSWindowStyleMask::NSFullScreenWindowMask,
                 transparent,
             );
             id.setStyleMask_(style_mask);
@@ -49,7 +54,12 @@ fn main() {
                 kind: MigrationKind::Up,
             }],
         ))
-        // .setup(|app| {})
+        .setup(|app| {
+            let win = app.get_window("main").unwrap();
+            win.set_transparent_titlebar(true);
+
+            Ok(())
+        })
         .setup(set_up_window)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
