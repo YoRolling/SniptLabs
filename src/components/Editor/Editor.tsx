@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor'
-import { useEffect, useRef } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import 'monaco-editor/esm/vs/basic-languages/css/css.contribution'
 import 'monaco-editor/esm/vs/basic-languages/xml/xml.contribution'
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution'
@@ -12,6 +12,7 @@ import HtmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import {
   Button,
   Group,
+  Menu,
   SimpleGrid,
   Stack,
   TextInput,
@@ -40,21 +41,25 @@ export default function Editor() {
   const editorRef = useRef<HTMLDivElement>(null)
   const editor = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
   const nameRef = useRef<HTMLInputElement>(null)
-  const languageRef = useRef<HTMLInputElement>(null)
   const colorScheme = useColorScheme()
   const clipboard = useClipboard({ timeout: 500 })
-  const language = useRef<string>('typescript')
+  const [language, updateLanguage] = useState<string>('plaintext')
+
+  const [position, setPosition] = useState<monaco.Position>({
+    lineNumber: 1,
+    column: 1,
+  } as monaco.Position)
   useEffect(() => {
     if (editorRef.current) {
       editor.current = monaco.editor.create(editorRef.current, {
-        value: 'function x() {\n\tconsole.log("Hello world!")\n}',
-        language: language.current || 'plaintext',
+        value: '// Type your code here',
+        language: language || 'plaintext',
         theme: colorScheme === 'light' ? 'vs' : 'vs-dark',
         minimap: {
           enabled: true,
           size: 'fit',
         },
-        readOnly: true,
+        // readOnly: true,
         showFoldingControls: 'always',
         renderLineHighlight: 'all',
         scrollbar: {
@@ -64,6 +69,12 @@ export default function Editor() {
           verticalScrollbarSize: 0,
           verticalSliderSize: 0,
         },
+      })
+      editor.current?.onDidChangeCursorPosition(() => {
+        const position = editor.current?.getPosition()
+        if (position) {
+          setPosition(position)
+        }
       })
     }
 
@@ -79,11 +90,19 @@ export default function Editor() {
       }
     }
   }, [editorRef])
+
+  useEffect(() => {
+    if (editor.current) {
+      monaco.editor.setModelLanguage(editor.current!.getModel()!, language)
+    }
+  }, [language])
+
   const resize = () => {
     if (editor.current) {
       editor.current.layout()
     }
   }
+
   const copy = () => {
     const model = editor.current?.getModel()
     if (model) {
@@ -96,10 +115,10 @@ export default function Editor() {
     }
   }
   const save = () => {
-    const data = {} as Snippent
+    const data = {} as Snippet
     const name = nameRef.current?.value
-    const language = languageRef.current?.value
     const model = editor.current?.getValue()
+
     if (name && language && model) {
       data.name = name
       data.language = language
@@ -111,6 +130,20 @@ export default function Editor() {
     }
   }
   useWindowEvent('resize', resize)
+  const LanguageSelector = forwardRef<HTMLButtonElement>(
+    function LanguageSelector(props, ref) {
+      return (
+        <UnstyledButton
+          className='font-mono text-xs flex items-center gap-3px'
+          ref={ref}
+          {...props}
+        >
+          {language}
+          <Selector size={12} />
+        </UnstyledButton>
+      )
+    }
+  )
   return (
     <Stack className='h-full p-4 overflow-hidden pb-0' spacing='xs'>
       <Group className='divide-x'>
@@ -187,11 +220,31 @@ export default function Editor() {
         <div className='w-full h-full' id='editor' ref={editorRef} />
       </div>
       <div className='status-bar flex items-center py-2'>
-        <UnstyledButton className='font-mono text-xs flex items-center gap-3px'>
-          {language.current}
-          <Selector size={12} />
-        </UnstyledButton>
-        <SimpleGrid cols={5} className='flex-none pl-3'></SimpleGrid>
+        <Menu
+          control={<LanguageSelector />}
+          position='top'
+          withArrow
+          size='sm'
+          classNames={{
+            body: 'max-h-sm overflow-auto',
+          }}
+        >
+          {languages.map((v) => (
+            <Menu.Item
+              onClick={() => {
+                updateLanguage(v.value)
+              }}
+              key={v.value}
+              className='font-mono'
+            >
+              {v.label}
+            </Menu.Item>
+          ))}
+        </Menu>
+        <Group spacing='sm' className='flex-none ml-auto'>
+          <span className='text-xs font-mono'>line: {position.lineNumber}</span>
+          <span className='text-xs font-mono'>column: {position.column}</span>
+        </Group>
       </div>
     </Stack>
   )

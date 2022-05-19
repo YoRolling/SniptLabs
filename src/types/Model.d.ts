@@ -4,7 +4,7 @@ type Base = {
   updatedAt?: string
   deprecated?: boolean
 }
-type Snippent = Base & {
+type Snippet = Base & {
   name: string
   language?: string
   content?: string

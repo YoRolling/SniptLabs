@@ -1,8 +1,7 @@
 import { Box, Text, Group, Badge, UnstyledButton } from '@mantine/core'
-import { NavLink } from 'react-router-dom'
 
 export default function SinppentItem(props: {
-  item: Snippent
+  item: Snippet
   onClick: () => void
   active?: boolean
 }) {
@@ -12,8 +11,7 @@ export default function SinppentItem(props: {
   } = props
   return (
     <UnstyledButton
-      component={NavLink}
-      to={`${item.id}`}
+      component='div'
       className='flex flex-col mx-2 item p-2 rounded bg-slate-50 cursor-pointer gap-10px '
       sx={(theme) => ({
         '&.active,&:hover': {
@@ -21,6 +19,7 @@ export default function SinppentItem(props: {
           backgroundColor: theme.colors.indigo['4'],
         },
       })}
+      onClick={props.onClick}
     >
       <Box className='item-header flex items-center gap-4px'>
         <Text className='item-title font-mono'>{name}</Text>

@@ -20,7 +20,7 @@ export async function getRelated(id: number) {
  * @param snippet
  * @returns
  */
-export async function save(snippet: Snippent) {
+export async function save(snippet: Snippet) {
   const { id, ...data } = snippet
   const keys = Object.keys(data) as Array<keyof typeof data>
   const values = keys.map((key) => data[key])
@@ -49,7 +49,7 @@ export async function remove(id: number) {
 export async function selectAll() {
   return db.select(
     'SELECT * FROM snippets where deprecated = 0'
-  ) as unknown as Snippent[]
+  ) as unknown as Snippet[]
 }
 
 export async function selectByTag(tag: string) {
@@ -63,13 +63,13 @@ export async function filterByFolder(folder: string | number) {
   return db.select(
     'SELECT * FROM snippets where deprecated = 0 and folerId = ?',
     [folder]
-  ) as unknown as Snippent[]
+  ) as unknown as Snippet[]
 }
 
-export async function getInboxSnippets(): Promise<Snippent[]> {
+export async function getInboxSnippets(): Promise<Snippet[]> {
   return db.select('SELECT * FROM snippets where deprecated = 0')
 }
 
-export async function getPinnedSnippents(): Promise<Snippent[]> {
+export async function getPinnedSnippents(): Promise<Snippet[]> {
   return db.select('SELECT * FROM snippets where deprecated = 0 and pinned = 1')
 }

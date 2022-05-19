@@ -1,26 +1,29 @@
+import Editor from '@/components/Editor/Editor'
 import { SnippentService } from '@/services'
 import { navFilterAtom } from '@/store/NavFilter'
 import { ScrollArea, Box, Group, Input, InputWrapper } from '@mantine/core'
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
-import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { ListSearch, Plus } from 'tabler-icons-react'
 import SinppentItem from './components/SinppetItem'
-
+import { selectedSnippetAtom, snippetModeAtom } from '@/store/SnippetStore'
+import { Prism } from '@mantine/prism'
 export default function Index() {
   return <IndexApp />
 }
 
 function IndexApp() {
-  const navigation = useNavigate()
-  const params: { id: string } = useParams() as { id: string }
+  const [currentSnippet, setCurrentSnippet] = useAtom(selectedSnippetAtom)
+  const [mode, setMode] = useAtom(snippetModeAtom)
   const filter = useAtomValue(navFilterAtom)
-  const [snippetList, setSnippetList] = useState<Snippent[]>([])
+  const [snippetList, setSnippetList] = useState<Snippet[]>([])
   const preCreateSnippet = () => {
-    navigation('editor')
+    // navigation('editor')
+    setCurrentSnippet(null)
+    setMode('edit')
   }
-  const showPreview = () => {
-    navigation(params.id)
+  const showPreview = (snippet: Snippet) => {
+    setCurrentSnippet(snippet)
   }
   useEffect(() => {
     const { type, params } = filter
@@ -64,8 +67,10 @@ function IndexApp() {
                 <SinppentItem
                   item={snippet}
                   key={snippet.id}
-                  onClick={showPreview}
-                  active={snippet.id == params.id}
+                  onClick={() => {
+                    showPreview(snippet)
+                  }}
+                  active={snippet.id == currentSnippet?.id}
                 />
               )
             })}
@@ -73,7 +78,24 @@ function IndexApp() {
         </ScrollArea>
       </div>
       <div className='content flex-1 p-1 overflow-hidden'>
-        <Outlet />
+        {mode === 'preview' ? (
+          <div className='h-full'>
+            <Prism
+              withLineNumbers
+              className='h-full'
+              language='typescript'
+              // language={(currentSnippet?.language ?? 'diff') as unknown}
+              classNames={{
+                scrollArea: 'h-full',
+              }}
+            >
+              {currentSnippet?.content ?? ''}
+              {/* {currentSnippet?.language ?? ''} */}
+            </Prism>
+          </div>
+        ) : (
+          <Editor />
+        )}
       </div>
     </div>
   )

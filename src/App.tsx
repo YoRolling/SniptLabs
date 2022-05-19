@@ -3,20 +3,13 @@ import Index from '@/pages/Home/Index'
 import { MantineProvider } from '@mantine/core'
 import { useColorScheme } from '@mantine/hooks'
 import { ModalsProvider } from '@mantine/modals'
-import { lazy, Suspense, useMemo, useState } from 'react'
-import {
-  BrowserRouter,
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useParams,
-} from 'react-router-dom'
-import { ThreeBody } from '@uiball/loaders'
-import './App.css'
-const Editor = lazy(() => import('@/components/Editor/Editor'))
-import { ColorSchemeContext } from './context/ThemeContext'
 import { NotificationsProvider } from '@mantine/notifications'
+import { useMemo, useState } from 'react'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import './App.css'
+import { ColorSchemeContext } from './context/ThemeContext'
+
+
 const App = () => {
   const colorScheme = useColorScheme()
   const [, updateColorScheme] = useState(() => {
@@ -49,28 +42,7 @@ const App = () => {
                 <Routes>
                   <Route path='/' element={<Layout />}>
                     <Route index element={<Navigate to='dash' />} />
-                    <Route path='dash' element={<Index />}>
-                      <Route path=':id' element={<Outlet />}>
-                        <Route
-                          index
-                          element={
-                            <Suspense
-                              fallback={
-                                <div className='wrap'>
-                                  <ThreeBody
-                                    size={35}
-                                    speed={1.1}
-                                    color='black'
-                                  />
-                                </div>
-                              }
-                            >
-                              <Editor />
-                            </Suspense>
-                          }
-                        />
-                      </Route>
-                    </Route>
+                    <Route path='dash' element={<Index />}></Route>
                     <Route path='settings' element={<div>settings</div>} />
                   </Route>
                   <Route path='*' element={<div>Not found</div>} />
