@@ -7,6 +7,9 @@ const prefix = `monaco-editor/esm/vs`
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), WindiCSS()],
+  server: {
+    port: 8082,
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
